@@ -1,0 +1,30 @@
+{
+  "name": "bookkeeper",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha ./test/**/*Test.js"
+  },
+  "keywords": [
+    "mysql",
+    "sql",
+    "orm"
+  ],
+  "author": "Matt Merkes",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.1",
+    "mysql": "^2.11.1",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-watch": "^4.3.9",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.0.2"
+  }
+}

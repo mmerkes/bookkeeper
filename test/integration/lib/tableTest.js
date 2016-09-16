@@ -333,7 +333,6 @@ describe('INTEGRATION Table', function () {
       it('should remove any fields not in the model');
 
       it.skip('should add any new fields from the model', done => {
-        console.log('IN THE TEST');
         var table = new Table(Example, connection);
         table.get_table_information((err, results) => {
           if (err) return done(err);

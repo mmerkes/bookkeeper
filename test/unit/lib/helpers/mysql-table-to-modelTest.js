@@ -201,4 +201,28 @@ describe('UNIT MySQLTableToModel', () => {
       expect(diff_builder).to.have.property('_properties').that.eql(example_properties);
     });
   });
+
+  describe('build()', () => {
+    it('should not break if no keys or fields are added', () => {
+      var diff_builder = new MySQLTableToModel('Example');
+      var model = diff_builder.build();
+      var expected_fields = {};
+      var expected_properties = {
+        name: 'Example'
+      };
+
+      expect(model).to.have.property('_fields').that.eql(expected_fields);
+      expect(model).to.have.property('_properties').that.eql(expected_properties);
+    });
+
+    it('should build a model based on added fields and keys', () => {
+      var diff_builder = new MySQLTableToModel('Example');
+      var model = diff_builder.add_fields(example_fields_info)
+        .add_keys(example_keys_info)
+        .build();
+
+      expect(model).to.have.property('_fields').that.eql(example_fields);
+      expect(model).to.have.property('_properties').that.eql(example_properties);
+    });
+  });
 });

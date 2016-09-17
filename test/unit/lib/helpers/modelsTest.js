@@ -2,6 +2,7 @@
 
 var chai = require('chai'),
     expect = chai.expect,
+    _ = require('underscore'),
     root = '../../../../lib/',
     Model = require(root + 'model'),
     models_helper = require(root +'helpers/models');
@@ -38,9 +39,34 @@ describe('UNIT MySQL TableDiffBuilder', () => {
       }
     }, {
       name: 'Example',
-      primary_key: ['id', 'other_id'],
+      primary_key: ['id', 'other_id']
+    });
+    var Example2 = new Model({
+      id: {
+        type: 'int',
+        auto_increment: true,
+        comment: 'foobar'
+      },
+      other_id: {
+        type: 'int-4'
+      },
+      other_id2: {
+        type: 'int-4'
+      },
+      foo: {
+        type: 'varchar-40',
+        not_null: true
+      },
+      baz: {
+        type: 'varchar-20',
+        unique: true
+      }
+    }, {
+      name: 'Example',
+      primary_key: ['id'],
       foreign_keys: [{
         model: OTHER_TABLE,
+        constraint_name: 'fk1',
         mappings: {
           other_id: 'id',
           other_id2: 'id2'
@@ -49,19 +75,51 @@ describe('UNIT MySQL TableDiffBuilder', () => {
         on_update: 'CASCADE'
       }]
     });
-    var Other = new Model({
-      id: {
-        type: 'int'
-      },
-      id2: {
-        type: 'int'
-      }
-    }, {
-      name: 'Other',
-      primary_key: ['id', 'id2']
-    });
 
-    it('should diff two models');
+    it('should diff two models', () => {
+      var expected_fields_diff = [{
+        action: ADD,
+        definition: Example._fields.bar,
+        name: 'bar'
+      }, {
+        action: DELETE,
+        name: 'baz'
+      }, {
+        action: UPDATE,
+        definition: Example._fields.foo,
+        name: 'foo'
+      }];
+      var expected_properties_diff = [{
+        action: UPDATE,
+        type: PRIMARY_KEY,
+        definition: Example._properties.primary_key
+      }, {
+        action: DELETE,
+        type: FOREIGN_KEY,
+        constraint_name: Example2._properties.foreign_keys[0].constraint_name
+      }];
+
+      var results = models_helper.diff_models(Example, Example2);
+      expect(results).to.have.property('fields')
+        .that.is.lengthOf(expected_fields_diff.length);
+      expect(results).to.have.property('properties')
+        .that.is.lengthOf(expected_properties_diff.length);
+
+      console.log(JSON.stringify(expected_fields_diff, null, 2));
+      console.log(JSON.stringify(results.fields, null, 2));
+
+      expected_fields_diff.forEach(obj => {
+        expect(results.fields.find(diff => {
+          return _.isEqual(obj, diff);
+        })).to.not.be.undefined;
+      });
+
+      expected_properties_diff.forEach(obj => {
+        expect(results.properties.find(diff => {
+          return _.isEqual(obj, diff);
+        })).to.not.be.undefined;
+      });
+    });
 
     it('should return no diff if model compared to self', () => {
       var results = models_helper.diff_models(Example, Example);

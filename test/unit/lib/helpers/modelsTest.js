@@ -14,7 +14,7 @@ const ADD = 'add',
       FOREIGN_KEY = 'foreign_key',
       OTHER_TABLE = 'other';
 
-describe('UNIT MySQL TableDiffBuilder', () => {
+describe('UNIT models', () => {
   describe('diff_models(model, actual)', () => {
     var Example = new Model({
       id: {
@@ -104,9 +104,6 @@ describe('UNIT MySQL TableDiffBuilder', () => {
         .that.is.lengthOf(expected_fields_diff.length);
       expect(results).to.have.property('properties')
         .that.is.lengthOf(expected_properties_diff.length);
-
-      console.log(JSON.stringify(expected_fields_diff, null, 2));
-      console.log(JSON.stringify(results.fields, null, 2));
 
       expected_fields_diff.forEach(obj => {
         expect(results.fields.find(diff => {
